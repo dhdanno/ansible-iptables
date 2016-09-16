@@ -1,0 +1,16 @@
+---
+
+- name: Cycle through rules
+  iptables: chain=INPUT
+            action=insert
+            source=0.0.0.0/0
+            protocol=tcp
+            match=tcp
+            state=present
+            ctstate=NEW
+            destination_port={{item}}
+            jump={{action}}
+  with_items: '{{ dports }}'
+
+- name: Perform an iptables-save to persist any firewall changes made to hosts
+  shell: /sbin/iptables-save > /etc/sysconfig/iptables
